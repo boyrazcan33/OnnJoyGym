@@ -2,7 +2,7 @@
 
 ## 👥 Team Members
 
-- **Ugur Can Boyrazddd** - Backend & Web Frontend Developer
+- **Ugur Can Boyraz** - Backend & Web Frontend Developer
 - **Canberk Ozcelik** - Mobile Developer (Flutter)
 
 ## 📖 Project Description
