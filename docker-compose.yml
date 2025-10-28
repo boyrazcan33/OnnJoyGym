@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: onjoygym-postgres
+    environment:
+      POSTGRES_USER: onjoygym_user
+      POSTGRES_PASSWORD: onjoygym123
+      POSTGRES_DB: onjoygym_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - onjoygym-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U onjoygym_user -d onjoygym_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    container_name: onjoygym-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/onjoygym_dev
+      SPRING_DATASOURCE_USERNAME: onjoygym_user
+      SPRING_DATASOURCE_PASSWORD: onjoygym123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - onjoygym-network
+
+volumes:
+  postgres_data:
+
+networks:
+  onjoygym-network:
+    driver: bridge
