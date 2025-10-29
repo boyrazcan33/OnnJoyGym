@@ -22,6 +22,18 @@ public class User {
     @Column(nullable = false)
     private String role = "USER"; // USER or ADMIN
 
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    @Column(length = 500)
+    private String goals;
+
+    @Column(length = 50)
+    private String experience; // BEGINNER, INTERMEDIATE, ADVANCED
+
+    @Column(name = "gym_preference")
+    private Long gymPreference;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
