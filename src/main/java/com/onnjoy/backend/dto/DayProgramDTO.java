@@ -9,10 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WeeklyProgramDTO {
-    private String clubName;
-    private String level;
-    private String goal;
-    private List<DayProgramDTO> days;
+public class DayProgramDTO {
+    private String dayName;
+    private List<ExerciseDTO> exercises;
 }
-
