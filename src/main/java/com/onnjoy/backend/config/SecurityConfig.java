@@ -2,6 +2,7 @@ package com.onnjoy.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,10 +18,11 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     public SecurityConfig() {
-        System.out.println("🔥🔥🔥 SECURITY CONFIG CONSTRUCTOR ÇAĞRILDI 🔥🔥🔥");
+        System.out.println("🔥🔥🔥 SECURITY CONFIG CONSTRUCTOR CALLED 🔥🔥🔥");
     }
 
     @Bean
@@ -30,23 +32,27 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("🔥 SecurityFilterChain BAŞLADI");
+        System.out.println("🔥 SecurityFilterChain STARTED");
         try {
             http
                     .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .csrf(csrf -> csrf.disable())
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(auth -> auth
-                            .requestMatchers("/api/auth/**", "/api/gyms/**", "/api/clubs/**").permitAll()
+                            .requestMatchers("/api/auth/**").permitAll()
+                            .requestMatchers("/api/gyms/**", "/api/clubs/**").permitAll()
+                            .requestMatchers("/api/reviews/**").permitAll()
+                            .requestMatchers("/api/videos/**", "/api/leaderboard/**").permitAll()
+                            .requestMatchers("/api/users/**", "/api/programs/**").permitAll()
                             .anyRequest().authenticated()
                     );
 
             SecurityFilterChain chain = http.build();
-            System.out.println("✅ SecurityFilterChain BAŞARILI");
+            System.out.println("✅ SecurityFilterChain SUCCESS");
             return chain;
 
         } catch (Exception e) {
-            System.err.println("❌ SecurityFilterChain HATASI: " + e.getMessage());
+            System.err.println("❌ SecurityFilterChain ERROR: " + e.getMessage());
             e.printStackTrace();
             throw e;
         }
