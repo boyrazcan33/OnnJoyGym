@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+### Security - AWS Credentials ###
+application-local.properties
+.env
+*.pem
+*.key
+aws-credentials.csv
