@@ -23,14 +23,24 @@ public class VideoService {
     private final VideoRepository videoRepository;
     private final UserRepository userRepository;
     private final GymRepository gymRepository;
-    private final S3Service s3Service; // Inject S3Service
+    private final S3Service s3Service;
 
     public Map<String, String> generateUploadUrl(VideoUploadDTO uploadDTO) {
+        // Validate file extension
+        String fileName = uploadDTO.getFileName().toLowerCase();
+        if (!fileName.endsWith(".mp4")) {
+            throw new IllegalArgumentException("Only MP4 format is supported");
+        }
+
+        // Validate reps (must be exactly 3)
+        if (uploadDTO.getReps() == null || uploadDTO.getReps() != 3) {
+            throw new IllegalArgumentException("Video must contain exactly 3 reps");
+        }
+
         // Generate unique S3 key
-        String fileExtension = getFileExtension(uploadDTO.getFileName());
         String s3Key = "videos/" + UUID.randomUUID() + "/" + uploadDTO.getFileName();
 
-        //  Generate REAL pre-signed URL using S3Service
+        // Generate REAL pre-signed URL using S3Service
         String uploadUrl = s3Service.generatePresignedUploadUrl(s3Key);
         String publicUrl = s3Service.getPublicUrl(s3Key);
 
@@ -45,6 +55,7 @@ public class VideoService {
         video.setGym(gym);
         video.setCategory(uploadDTO.getCategory());
         video.setWeight(uploadDTO.getWeight());
+        video.setReps(uploadDTO.getReps()); // YENİ - Save reps
         video.setS3Key(s3Key);
         video.setS3Url(publicUrl);
         video.setStatus(Video.VideoStatus.PENDING);
@@ -88,12 +99,5 @@ public class VideoService {
         video.setRejectionReason(reason);
         video.setUpdatedAt(LocalDateTime.now());
         return videoRepository.save(video);
-    }
-
-    private String getFileExtension(String fileName) {
-        if (fileName == null || !fileName.contains(".")) {
-            return "";
-        }
-        return fileName.substring(fileName.lastIndexOf("."));
     }
 }

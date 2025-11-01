@@ -27,6 +27,9 @@ public class Video {
     @Column(nullable = false)
     private Double weight; // Weight lifted in kg
 
+    @Column(nullable = false)
+    private Integer reps = 3; // 👈 YENİ FIELD - Fixed to 3 reps
+
     @Column(name = "s3_key", nullable = false)
     private String s3Key;
 

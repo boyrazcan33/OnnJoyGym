@@ -3,6 +3,7 @@ package com.onnjoy.backend.controller;
 import com.onnjoy.backend.dto.VideoUploadDTO;
 import com.onnjoy.backend.entity.Video;
 import com.onnjoy.backend.service.VideoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class VideoController {
     private final VideoService videoService;
 
     @PostMapping("/upload-url")
-    public ResponseEntity<Map<String, String>> getUploadUrl(@RequestBody VideoUploadDTO uploadDTO) {
+    public ResponseEntity<Map<String, String>> getUploadUrl(@Valid @RequestBody VideoUploadDTO uploadDTO) {
         Map<String, String> response = videoService.generateUploadUrl(uploadDTO);
         return ResponseEntity.ok(response);
     }

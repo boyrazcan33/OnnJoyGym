@@ -21,6 +21,9 @@ public class S3Service {
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
 
+    @Value("${aws.s3.region}")
+    private String region;
+
     /**
      * Generate a pre-signed URL for uploading a video to S3
      * @param s3Key The S3 key (path) where the file will be stored
@@ -57,9 +60,10 @@ public class S3Service {
      * @return Public S3 URL
      */
     public String getPublicUrl(String s3Key) {
+        // Use the region from application.properties
         return String.format("https://%s.s3.%s.amazonaws.com/%s",
                 bucketName,
-                s3Client.serviceClientConfiguration().region().id(),
+                region,
                 s3Key);
     }
 
