@@ -2,8 +2,8 @@
 
 ## 👥 Team Members
 
-- **Ugur Can Boyraz** - Backend Developer
-- **Canberk Ozcelik** - Frontend Developer 
+- **Ugur Can Boyraz** - Web Developer
+- **Canberk Ozcelik** - Mobíle Developer 
 
 ## 📖 Project Description
 
