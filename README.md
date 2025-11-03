@@ -2,8 +2,8 @@
 
 ## 👥 Team Members
 
-- **Ugur Can Boyraz** - Backend & Web Frontend Developer
-- **Canberk Ozcelik** - Mobile Developer (Flutter)
+- **Ugur Can Boyraz** - Backend Developer
+- **Canberk Ozcelik** - Frontend Developer 
 
 ## 📖 Project Description
 
@@ -27,8 +27,6 @@ We aim to create a comprehensive fitness community platform that provides:
 - Angular
 - PWA (Progressive Web App)
 
-**Mobile:**
-- Flutter
 
 **Infrastructure:**
 - Docker
@@ -45,7 +43,6 @@ We aim to create a comprehensive fitness community platform that provides:
 
 ### Milestone 2: Frontend Development (Oct 30 - Nov 3)
 - Angular web application
-- Flutter mobile application
 - Authentication flow
 - Four core pillars implementation (Buddy Matching, Gym Reviews, Leaderboards, Workout Programs)
 
