@@ -1,6 +1,8 @@
 package com.onnjoy.backend.controller;
 
 import com.onnjoy.backend.entity.Review;
+import com.onnjoy.backend.entity.User;
+import com.onnjoy.backend.repository.UserRepository;
 import com.onnjoy.backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,14 +18,35 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<List<Review>> getAllReviews() {
+    public ResponseEntity<List<Review>> getAllReviews(@RequestParam(required = false) Long userId) {
+        // Check if user is activated (if userId provided)
+        if (userId != null) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            if (!user.getIsActivated()) {
+                throw new IllegalArgumentException("You must complete buddy matching or upload a video to view gym reviews");
+            }
+        }
+
         return ResponseEntity.ok(reviewService.getAllReviews());
     }
 
     @GetMapping("/gym/{gymId}")
-    public ResponseEntity<List<Review>> getReviewsByGym(@PathVariable Long gymId) {
+    public ResponseEntity<List<Review>> getReviewsByGym(@PathVariable Long gymId, @RequestParam(required = false) Long userId) {
+        // Check if user is activated (if userId provided)
+        if (userId != null) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            if (!user.getIsActivated()) {
+                throw new IllegalArgumentException("You must complete buddy matching or upload a video to view gym reviews");
+            }
+        }
+
         return ResponseEntity.ok(reviewService.getReviewsByGymId(gymId));
     }
 

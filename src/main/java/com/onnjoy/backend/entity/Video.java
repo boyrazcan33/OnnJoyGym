@@ -22,13 +22,16 @@ public class Video {
     private Gym gym;
 
     @Column(nullable = false)
-    private String category; // BENCH_PRESS, SQUAT, DEADLIFT, PULL_UP, etc.
+    private String category; // Gender-based categories
 
     @Column(nullable = false)
-    private Double weight; // Weight lifted in kg
+    private Double weight;
 
     @Column(nullable = false)
-    private Integer reps = 3; // 👈 YENİ FIELD - Fixed to 3 reps
+    private Integer reps = 3;
+
+    @Column(name = "user_gender", length = 50)
+    private String userGender; // MALE or FEMALE - for category validation
 
     @Column(name = "s3_key", nullable = false)
     private String s3Key;

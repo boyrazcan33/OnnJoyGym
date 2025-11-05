@@ -39,3 +39,12 @@ application-local.properties
 *.pem
 *.key
 aws-credentials.csv
+
+
+### Migration Files (Local Development) ###
+V*.sql
+**/db/migration/V*.sql
+
+### Password Generator Utility ###
+PasswordHashGenerator.java
+**/util/PasswordHashGenerator.java

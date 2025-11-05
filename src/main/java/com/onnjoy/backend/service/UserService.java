@@ -36,19 +36,31 @@ public class UserService {
     public User updateProfile(Long id, ProfileUpdateDTO profileDTO) {
         User user = getUserById(id);
         user.setBio(profileDTO.getBio());
-        user.setGoals(profileDTO.getGoals());
         user.setExperience(profileDTO.getExperience());
         user.setGymPreference(profileDTO.getGymPreference());
         user.setUpdatedAt(LocalDateTime.now());
         return userRepository.save(user);
     }
 
+    public void activateUser(Long userId) {
+        User user = getUserById(userId);
+        user.setIsActivated(true);
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+    }
+
     public UserClub joinClub(Long userId, Long clubId) {
+        User user = getUserById(userId);
+
+        // Check if user is activated
+        if (!user.getIsActivated()) {
+            throw new IllegalArgumentException("User must complete buddy matching or upload a video first");
+        }
+
         if (userClubRepository.existsByUserIdAndClubId(userId, clubId)) {
             throw new IllegalArgumentException("User already joined this club");
         }
 
-        User user = getUserById(userId);
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new IllegalArgumentException("Club not found with id: " + clubId));
 
@@ -82,7 +94,7 @@ public class UserService {
         }
 
         if (goal != null && !goal.isEmpty()) {
-            predicates.add(cb.like(cb.lower(user.get("goals")), "%" + goal.toLowerCase() + "%"));
+            predicates.add(cb.equal(cb.lower(user.get("trainingGoal")), goal.toLowerCase()));
         }
 
         if (experience != null && !experience.isEmpty()) {

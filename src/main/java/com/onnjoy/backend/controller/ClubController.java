@@ -1,6 +1,7 @@
 package com.onnjoy.backend.controller;
 
 import com.onnjoy.backend.entity.Club;
+import com.onnjoy.backend.entity.ClubProgress;
 import com.onnjoy.backend.service.ClubService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,24 @@ public class ClubController {
     @GetMapping("/{id}")
     public ResponseEntity<Club> getClubById(@PathVariable Long id) {
         return ResponseEntity.ok(clubService.getClubById(id));
+    }
+
+    @PostMapping("/{clubId}/join/{userId}")
+    public ResponseEntity<ClubProgress> joinClub(@PathVariable Long clubId, @PathVariable Long userId) {
+        ClubProgress progress = clubService.joinClubWithProgress(userId, clubId);
+        return new ResponseEntity<>(progress, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{clubId}/progress/{userId}")
+    public ResponseEntity<ClubProgress> getCurrentProgress(@PathVariable Long clubId, @PathVariable Long userId) {
+        ClubProgress progress = clubService.getCurrentProgress(userId, clubId);
+        return ResponseEntity.ok(progress);
+    }
+
+    @GetMapping("/progress/{userId}")
+    public ResponseEntity<List<ClubProgress>> getUserClubProgress(@PathVariable Long userId) {
+        List<ClubProgress> progress = clubService.getUserClubProgress(userId);
+        return ResponseEntity.ok(progress);
     }
 
     @PostMapping
