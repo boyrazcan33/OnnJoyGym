@@ -35,8 +35,8 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getAllReviews());
     }
 
-    @GetMapping("/gym/{gymId}")
-    public ResponseEntity<List<Review>> getReviewsByGym(@PathVariable Long gymId, @RequestParam(required = false) Long userId) {
+    @GetMapping("/brand/{brandId}") // CHANGED: from /gym/{gymId} to /brand/{brandId}
+    public ResponseEntity<List<Review>> getReviewsByBrand(@PathVariable Long brandId, @RequestParam(required = false) Long userId) {
         // Check if user is activated (if userId provided)
         if (userId != null) {
             User user = userRepository.findById(userId)
@@ -47,7 +47,7 @@ public class ReviewController {
             }
         }
 
-        return ResponseEntity.ok(reviewService.getReviewsByGymId(gymId));
+        return ResponseEntity.ok(reviewService.getReviewsByBrandId(brandId));
     }
 
     @GetMapping("/{id}")

@@ -2,6 +2,7 @@ package com.onnjoy.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -21,6 +22,9 @@ public class ClubProgress {
     @ManyToOne
     @JoinColumn(name = "club_id", nullable = false)
     private Club club;
+
+    @Column(name = "starting_max")
+    private BigDecimal startingMax; // NEW: User's 1RM or max reps when joining
 
     @Column(name = "current_week", nullable = false)
     private Integer currentWeek = 1;

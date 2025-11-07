@@ -18,8 +18,8 @@ public class ReviewService {
         return reviewRepository.findAll();
     }
 
-    public List<Review> getReviewsByGymId(Long gymId) {
-        return reviewRepository.findByGymId(gymId);
+    public List<Review> getReviewsByBrandId(Long brandId) { // CHANGED: from getReviewsByGymId
+        return reviewRepository.findByGymBrandId(brandId);
     }
 
     public Review getReviewById(Long id) {
@@ -36,6 +36,10 @@ public class ReviewService {
     public Review updateReview(Long id, Review reviewDetails) {
         Review review = getReviewById(id);
         review.setRating(reviewDetails.getRating());
+        review.setRatingDecimal(reviewDetails.getRatingDecimal());
+        review.setPriceInfo(reviewDetails.getPriceInfo());
+        review.setPros(reviewDetails.getPros());
+        review.setCons(reviewDetails.getCons());
         review.setContent(reviewDetails.getContent());
         review.setAuthorName(reviewDetails.getAuthorName());
         review.setIsExpert(reviewDetails.getIsExpert());

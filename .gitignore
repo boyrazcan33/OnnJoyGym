@@ -33,7 +33,6 @@ build/
 .vscode/
 
 
-application.properties
 
 
 ### Security - AWS Credentials ###
@@ -42,9 +41,14 @@ application-local.properties
 *.pem
 *.key
 aws-credentials.csv
+application-prod.properties
+application.properties
+
 
 ### Migration Files ###
 src/main/resources/db/migration/V*.sql
 
 ### Password Generator Utility ###
 src/main/java/com/onnjoy/backend/util/PasswordHashGenerator.java
+
+containers.json
