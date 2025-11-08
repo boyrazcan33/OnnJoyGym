@@ -27,8 +27,9 @@ public class AuthService {
         user.setEmail(registerDTO.getEmail());
         user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         user.setTelegramUsername(registerDTO.getTelegramUsername());
+        user.setGender(registerDTO.getGender());
         user.setRole("USER");
-        user.setIsActivated(false); // Will be activated after buddy match OR video upload
+        user.setIsActivated(false);
 
         userRepository.save(user);
 

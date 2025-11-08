@@ -20,4 +20,8 @@ public class RegisterDTO {
     @NotBlank(message = "Telegram username is required")
     @Pattern(regexp = "^@[a-zA-Z0-9_]{5,32}$", message = "Invalid Telegram username format (must start with @ and be 5-32 characters)")
     private String telegramUsername;
+
+    @NotBlank(message = "Gender is required")
+    @Pattern(regexp = "MALE|FEMALE", message = "Gender must be MALE or FEMALE")
+    private String gender;
 }
