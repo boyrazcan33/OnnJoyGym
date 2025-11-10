@@ -59,8 +59,8 @@ public class BuddyMatchingService {
         List<BuddyMatchResponseDTO> matches = new ArrayList<>();
 
         // Get current user's preferences
-        List<Long> userGyms = parseJsonToList(currentUser.getPreferredLocations(), Long.class);
-        List<String> userSchedule = parseJsonToList(currentUser.getDailySchedule(), String.class);
+        List<Long> userGyms = parseJsonToLongList(currentUser.getPreferredLocations());
+        List<String> userSchedule = parseJsonToStringList(currentUser.getDailySchedule());
 
         for (User otherUser : allUsers) {
             // Skip self and non-activated users
@@ -81,8 +81,8 @@ public class BuddyMatchingService {
                 match.setMatchScore(score);
 
                 // Find common gyms and time slots
-                List<Long> otherGyms = parseJsonToList(otherUser.getPreferredLocations(), Long.class);
-                List<String> otherSchedule = parseJsonToList(otherUser.getDailySchedule(), String.class);
+                List<Long> otherGyms = parseJsonToLongList(otherUser.getPreferredLocations());
+                List<String> otherSchedule = parseJsonToStringList(otherUser.getDailySchedule());
 
                 List<Long> commonGyms = userGyms.stream()
                         .filter(otherGyms::contains)
@@ -129,14 +129,14 @@ public class BuddyMatchingService {
         }
 
         // Common gym (+25 points)
-        List<Long> user2Gyms = parseJsonToList(user2.getPreferredLocations(), Long.class);
+        List<Long> user2Gyms = parseJsonToLongList(user2.getPreferredLocations());
         boolean hasCommonGym = user1Gyms.stream().anyMatch(user2Gyms::contains);
         if (hasCommonGym) {
             score += 25;
         }
 
         // Common time slot (+25 points)
-        List<String> user2Schedule = parseJsonToList(user2.getDailySchedule(), String.class);
+        List<String> user2Schedule = parseJsonToStringList(user2.getDailySchedule());
         boolean hasCommonTime = user1Schedule.stream().anyMatch(user2Schedule::contains);
         if (hasCommonTime) {
             score += 25;
@@ -171,12 +171,34 @@ public class BuddyMatchingService {
         return compatibilityMap.getOrDefault(behavior1, Collections.emptyList()).contains(behavior2);
     }
 
-    private <T> List<T> parseJsonToList(String json, Class<T> clazz) {
+    /**
+     * Parse JSON to List<Long> with proper Integer to Long conversion
+     */
+    private List<Long> parseJsonToLongList(String json) {
         if (json == null || json.isEmpty()) {
             return new ArrayList<>();
         }
         try {
-            return objectMapper.readValue(json, new TypeReference<List<T>>() {});
+            // First parse as List<Integer> since JSON numbers are typically integers
+            List<Integer> integers = objectMapper.readValue(json, new TypeReference<List<Integer>>() {});
+            // Convert to Long list
+            return integers.stream()
+                    .map(Integer::longValue)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Parse JSON to List<String>
+     */
+    private List<String> parseJsonToStringList(String json) {
+        if (json == null || json.isEmpty()) {
+            return new ArrayList<>();
+        }
+        try {
+            return objectMapper.readValue(json, new TypeReference<List<String>>() {});
         } catch (Exception e) {
             return new ArrayList<>();
         }
