@@ -2,7 +2,6 @@ package com.onnjoy.backend.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,7 +18,7 @@ public class JwtUtil {
     @Value("${jwt.secret:OnJoyGymSecretKeyForJWTTokenGenerationMustBeLongEnough2024}")
     private String secret;
 
-    @Value("${jwt.expiration:86400000}") // 24 hours in milliseconds
+    @Value("${jwt.expiration:86400000}")
     private Long expiration;
 
     private SecretKey getSigningKey() {
@@ -32,6 +31,11 @@ public class JwtUtil {
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    // ✅ NEW: Extract role from token
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

@@ -15,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -36,17 +37,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     if (jwtUtil.validateToken(token, email)) {
+                        // ✅ CRITICAL: Extract role from JWT token
+                        String role = jwtUtil.extractRole(token);
+
+                        // ✅ Create authority with ROLE_ prefix (Spring Security convention)
+                        List<SimpleGrantedAuthority> authorities = Collections.singletonList(
+                                new SimpleGrantedAuthority("ROLE_" + role)
+                        );
+
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                                 email,
                                 null,
-                                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                                authorities
                         );
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                        System.out.println("✅ Authenticated user: " + email + " with role: ROLE_" + role);
                     }
                 }
             } catch (Exception e) {
-                System.err.println("JWT validation error: " + e.getMessage());
+                System.err.println("❌ JWT validation error: " + e.getMessage());
             }
         }
 

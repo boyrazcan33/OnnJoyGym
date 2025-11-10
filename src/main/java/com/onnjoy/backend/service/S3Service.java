@@ -26,19 +26,19 @@ public class S3Service {
 
     /**
      * Generate a pre-signed URL for uploading a video to S3
-     * @param s3Key The S3 key (path) where the file will be stored
-     * @return Pre-signed URL valid for 10 minutes
      */
     public String generatePresignedUploadUrl(String s3Key) {
         try {
-            // Create a PutObjectRequest
+            // ✅ Create PutObjectRequest WITHOUT contentType
+            // AWS SDK will handle the signing correctly
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(s3Key)
-                    .contentType("video/mp4") // or detect from file extension
+                    // ❌ REMOVED: .contentType("video/mp4")
+                    // Content-Type should be set during upload, not in pre-signed URL
                     .build();
 
-            // Create a PresignRequest with 10 minutes expiration
+            // Create PresignRequest with 10 minutes expiration
             PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
                     .signatureDuration(Duration.ofMinutes(10))
                     .putObjectRequest(putObjectRequest)
@@ -56,11 +56,8 @@ public class S3Service {
 
     /**
      * Get the public URL for an uploaded video
-     * @param s3Key The S3 key of the uploaded file
-     * @return Public S3 URL
      */
     public String getPublicUrl(String s3Key) {
-        // Use the region from application.properties
         return String.format("https://%s.s3.%s.amazonaws.com/%s",
                 bucketName,
                 region,
@@ -69,8 +66,6 @@ public class S3Service {
 
     /**
      * Check if a file exists in S3
-     * @param s3Key The S3 key to check
-     * @return true if file exists, false otherwise
      */
     public boolean doesFileExist(String s3Key) {
         try {
