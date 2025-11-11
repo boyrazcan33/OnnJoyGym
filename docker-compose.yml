@@ -27,6 +27,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/onjoygym_dev
       SPRING_DATASOURCE_USERNAME: onjoygym_user
       SPRING_DATASOURCE_PASSWORD: onjoygym123
+
     depends_on:
       postgres:
         condition: service_healthy
