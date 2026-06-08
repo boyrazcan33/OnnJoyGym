@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ProfileUpdateDTO {
+    private String username;
     private String bio;
     private String goals;
     private String experience;

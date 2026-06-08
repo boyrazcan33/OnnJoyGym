@@ -4,6 +4,7 @@ import com.onnjoy.backend.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -39,14 +40,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Public auth + legal
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/gyms/**", "/api/clubs/**").permitAll()
-                        .requestMatchers("/api/reviews/**").permitAll()
-                        .requestMatchers("/api/videos/**", "/api/leaderboard/**").permitAll()
-                        .requestMatchers("/api/users/**", "/api/programs/**").permitAll()
-                        .requestMatchers("/api/buddies/**").permitAll()
-                        .requestMatchers("/api/gym-brands/**").permitAll()
                         .requestMatchers("/api/legal/**").permitAll()
+                        // Public read-only resources
+                        .requestMatchers(HttpMethod.GET, "/api/gyms/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/gym-brands/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/leaderboard/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/clubs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/videos/**").permitAll()
+                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

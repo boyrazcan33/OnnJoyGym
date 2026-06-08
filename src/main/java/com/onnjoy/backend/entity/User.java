@@ -22,6 +22,9 @@ public class User {
     @Column(nullable = false)
     private String role = "USER"; // USER or ADMIN
 
+    @Column(length = 50, unique = true)
+    private String username;
+
     @Column(columnDefinition = "TEXT")
     private String bio;
 

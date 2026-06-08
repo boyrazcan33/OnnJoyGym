@@ -35,6 +35,13 @@ public class UserService {
 
     public User updateProfile(Long id, ProfileUpdateDTO profileDTO) {
         User user = getUserById(id);
+        if (profileDTO.getUsername() != null && !profileDTO.getUsername().isBlank()) {
+            if (!profileDTO.getUsername().equals(user.getUsername())
+                    && userRepository.existsByUsername(profileDTO.getUsername())) {
+                throw new IllegalArgumentException("Username already taken");
+            }
+            user.setUsername(profileDTO.getUsername());
+        }
         user.setBio(profileDTO.getBio());
         user.setExperience(profileDTO.getExperience());
         user.setGymPreference(profileDTO.getGymPreference());

@@ -9,5 +9,8 @@ public class AuthResponseDTO {
     private String token;
     private Long userId;
     private String email;
+    private String username;
     private String role;
+    private Boolean isActivated;
+    private Boolean emailVerified;
 }

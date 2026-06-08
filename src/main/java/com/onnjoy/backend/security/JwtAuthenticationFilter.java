@@ -52,12 +52,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         );
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                        System.out.println("✅ Authenticated user: " + email + " with role: ROLE_" + role);
                     }
                 }
             } catch (Exception e) {
-                System.err.println("❌ JWT validation error: " + e.getMessage());
+                // Invalid token — request continues unauthenticated
             }
         }
 

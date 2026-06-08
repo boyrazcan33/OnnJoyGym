@@ -26,28 +26,28 @@ public class AuthService {
             throw new IllegalArgumentException("Email already exists");
         }
 
+        if (userRepository.existsByUsername(registerDTO.getUsername())) {
+            throw new IllegalArgumentException("Username already taken");
+        }
+
         User user = new User();
+        user.setUsername(registerDTO.getUsername());
         user.setEmail(registerDTO.getEmail());
         user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         user.setTelegramUsername(registerDTO.getTelegramUsername());
         user.setGender(registerDTO.getGender());
         user.setRole("USER");
         user.setIsActivated(false);
-
-        // Email verification
         user.setEmailVerified(false);
-        String verificationToken = UUID.randomUUID().toString();
-        user.setVerificationToken(verificationToken);
+        user.setVerificationToken(UUID.randomUUID().toString());
 
         userRepository.save(user);
 
-        // Send verification email (async, doesn't block)
-        emailService.sendVerificationEmail(user.getEmail(), verificationToken);
+        emailService.sendVerificationEmail(user.getEmail(), user.getVerificationToken());
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
-
-        //  DEĞIŞIKLIK: userId eklendi
-        return new AuthResponseDTO(token, user.getId(), user.getEmail(), user.getRole());
+        return new AuthResponseDTO(token, user.getId(), user.getEmail(), user.getUsername(),
+                user.getRole(), user.getIsActivated(), user.getEmailVerified());
     }
 
     public AuthResponseDTO login(LoginDTO loginDTO) {
@@ -59,15 +59,12 @@ public class AuthService {
         }
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
-
-        //  DEĞIŞIKLIK: userId eklendi
-        return new AuthResponseDTO(token, user.getId(), user.getEmail(), user.getRole());
+        return new AuthResponseDTO(token, user.getId(), user.getEmail(), user.getUsername(),
+                user.getRole(), user.getIsActivated(), user.getEmailVerified());
     }
 
     public String verifyEmail(String token) {
-        User user = userRepository.findAll().stream()
-                .filter(u -> token.equals(u.getVerificationToken()))
-                .findFirst()
+        User user = userRepository.findByVerificationToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid verification token"));
 
         user.setEmailVerified(true);
