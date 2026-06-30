@@ -42,6 +42,9 @@ public class Review {
     @Column(name = "is_expert")
     private Boolean isExpert = false;
 
+    @Column(name = "review_accuracy_score")
+    private Integer reviewAccuracyScore;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 

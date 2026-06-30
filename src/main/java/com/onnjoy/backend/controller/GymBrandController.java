@@ -16,8 +16,16 @@ public class GymBrandController {
     private final GymBrandRepository gymBrandRepository;
 
     @GetMapping
-    public ResponseEntity<List<GymBrand>> getAllBrands() {
+    public ResponseEntity<List<GymBrand>> getBrands(@RequestParam(required = false) String country) {
+        if (country != null && !country.isBlank()) {
+            return ResponseEntity.ok(gymBrandRepository.findByCountryOrderByNameAsc(country));
+        }
         return ResponseEntity.ok(gymBrandRepository.findAll());
+    }
+
+    @GetMapping("/countries")
+    public ResponseEntity<List<String>> getCountries() {
+        return ResponseEntity.ok(gymBrandRepository.findDistinctCountries());
     }
 
     @GetMapping("/{id}")
