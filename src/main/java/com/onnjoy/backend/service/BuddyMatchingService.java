@@ -27,13 +27,8 @@ public class BuddyMatchingService {
         User user = userRepository.findById(requestDTO.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // Save preferences
-        user.setTrainingGoal(requestDTO.getTrainingGoal());
-        user.setGender(requestDTO.getGender());
-        user.setSocialBehavior(requestDTO.getSocialBehavior());
-        user.setAgeRange(requestDTO.getAgeRange());
-        user.setTelegramUsername(requestDTO.getTelegramUsername());
-        user.setIsActivated(true); // Activate after preferences saved
+        // Save preferences — gender and telegramUsername are set at registration, not overwritten here
+        user.setIsActivated(true);
 
         // Convert lists to JSON strings
         try {
@@ -68,6 +63,20 @@ public class BuddyMatchingService {
                 continue;
             }
 
+            // Hard reject: no common time slot
+            List<String> otherSchedule = parseJsonToStringList(otherUser.getDailySchedule());
+            boolean hasCommonTime = userSchedule.stream().anyMatch(otherSchedule::contains);
+            if (!hasCommonTime) {
+                continue;
+            }
+
+            // Hard reject: no common gym branch
+            List<Long> otherGyms = parseJsonToLongList(otherUser.getPreferredLocations());
+            boolean hasCommonGym = userGyms.stream().anyMatch(otherGyms::contains);
+            if (!hasCommonGym) {
+                continue;
+            }
+
             int score = calculateMatchScore(currentUser, otherUser, userGyms, userSchedule);
 
             // Only return matches with score >= 50
@@ -79,10 +88,6 @@ public class BuddyMatchingService {
                 match.setSocialBehavior(otherUser.getSocialBehavior());
                 match.setAgeRange(otherUser.getAgeRange());
                 match.setMatchScore(score);
-
-                // Find common gyms and time slots
-                List<Long> otherGyms = parseJsonToLongList(otherUser.getPreferredLocations());
-                List<String> otherSchedule = parseJsonToStringList(otherUser.getDailySchedule());
 
                 List<Long> commonGyms = userGyms.stream()
                         .filter(otherGyms::contains)
@@ -123,34 +128,34 @@ public class BuddyMatchingService {
     private int calculateMatchScore(User user1, User user2, List<Long> user1Gyms, List<String> user1Schedule) {
         int score = 0;
 
-        // Training goal match (+30 points)
-        if (user1.getTrainingGoal() != null && user1.getTrainingGoal().equals(user2.getTrainingGoal())) {
-            score += 30;
-        }
+        // INACTIVE — training goal match (+30 points) — kept for future reactivation
+        // if (user1.getTrainingGoal() != null && user1.getTrainingGoal().equals(user2.getTrainingGoal())) {
+        //     score += 30;
+        // }
 
-        // Common gym (+25 points)
+        // Common gym branch (+25 points) — hard reject already filters non-matches before this point
         List<Long> user2Gyms = parseJsonToLongList(user2.getPreferredLocations());
         boolean hasCommonGym = user1Gyms.stream().anyMatch(user2Gyms::contains);
         if (hasCommonGym) {
             score += 25;
         }
 
-        // Common time slot (+25 points)
+        // Common time slot (+25 points) — hard reject already filters non-matches before this point
         List<String> user2Schedule = parseJsonToStringList(user2.getDailySchedule());
         boolean hasCommonTime = user1Schedule.stream().anyMatch(user2Schedule::contains);
         if (hasCommonTime) {
             score += 25;
         }
 
-        // Social behavior compatibility (+10 points)
-        if (isSocialBehaviorCompatible(user1.getSocialBehavior(), user2.getSocialBehavior())) {
-            score += 10;
-        }
+        // INACTIVE — social behavior compatibility (+10 points) — kept for future reactivation
+        // if (isSocialBehaviorCompatible(user1.getSocialBehavior(), user2.getSocialBehavior())) {
+        //     score += 10;
+        // }
 
-        // Same age range (+10 points)
-        if (user1.getAgeRange() != null && user1.getAgeRange().equals(user2.getAgeRange())) {
-            score += 10;
-        }
+        // INACTIVE — same age range (+10 points) — kept for future reactivation
+        // if (user1.getAgeRange() != null && user1.getAgeRange().equals(user2.getAgeRange())) {
+        //     score += 10;
+        // }
 
         return score;
     }

@@ -10,27 +10,26 @@ public class BuddyMatchRequestDTO {
     @NotNull(message = "User ID is required")
     private Long userId;
 
-    @NotBlank(message = "Training goal is required")
+    // Optional — inactive in matching scoring but kept for future use
     private String trainingGoal; // HYPERTROPHY, FAT_LOSS, ENDURANCE, MOBILITY
 
-    @NotBlank(message = "Gender is required")
+    // Collected at registration — not re-sent from buddy preferences form
     private String gender; // MALE, FEMALE, NON_BINARY
 
     @NotNull(message = "Preferred locations are required")
-    @Size(min = 1, max = 5, message = "Select 1-5 gym locations")
-    private List<Long> preferredLocations; // Gym IDs
+    @Size(min = 3, message = "Select at least 3 gym branches")
+    private List<Long> preferredLocations; // Gym IDs (min 3, max 2 brands enforced on frontend)
 
     @NotNull(message = "Daily schedule is required")
-    @Size(min = 1, max = 2, message = "Select 1-2 time slots")
-    private List<String> dailySchedule; // Time slots
+    @Size(min = 1, max = 4, message = "Select 1-4 time slots")
+    private List<String> dailySchedule; // 4 slots: MORNING, AFTERNOON, EVENING, NIGHT
 
-    @NotBlank(message = "Social behavior is required")
+    // Optional — inactive in matching scoring but kept for future use
     private String socialBehavior; // FOCUSED, CHATTY, COMPETITIVE, etc.
 
-    @NotBlank(message = "Age range is required")
+    // Optional — inactive in matching scoring but kept for future use
     private String ageRange; // 16-30, 31-45, 45+
 
-    @NotBlank(message = "Telegram username is required")
-    @Pattern(regexp = "^@[a-zA-Z0-9_]{5,32}$", message = "Invalid Telegram username format (must start with @ and be 5-32 characters)")
+    // Collected at registration — not re-sent from buddy preferences form
     private String telegramUsername;
 }
